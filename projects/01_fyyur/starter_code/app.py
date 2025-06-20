@@ -36,6 +36,7 @@ venue_genres = db.Table('venue_genres',
     db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
     db.Column('genre_id', db.Integer, db.ForeignKey('Genres.id'), primary_key=True)
 )
+
 class Genres(db.Model):
   __tablename__ = 'Genres'
 
@@ -51,9 +52,12 @@ class Venue(db.Model):
     state = db.Column(db.String(120))
     address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
+    genres = db.relationship('Genres', secondary=venue_genres, backref=db.backref('genres', lazy=True))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    genres = db.relationship('Genres', secondary=venue_genres, backref=db.backref('genres', lazy=True))
+    website_link = db.Column(db.String(120))
+    looking_for_talent = db.Column(db.Boolean, nullable=False, default=False)
+    seeking = db.Column(db.String(500))
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
