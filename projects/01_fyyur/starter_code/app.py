@@ -257,15 +257,22 @@ def create_venue_submission():
   state = request.form['state']
   address = request.form['address']
   phone = request.form['phone']
-  genres = request.form['genres']
   image_link = request.form['image_link']
   facebook_link = request.form['facebook_link']
   website_link = request.form['website_link']
   looking_for_talent = request.form['looking_for_talent']
   seeking = request.form['seeking']
-  new_venue = Venue(name, city, state, address, phone, genres, image_link, facebook_link, website_link, looking_for_talent, seeking)
+  genre_names = request.form.getlist('genres')
+
+  genre_objects = []
+  for genre_name in genre_names:
+    genre = Genres.query.filter_by(genre=genre_name).first()
+    genre_objects.append(genre)
+
+  new_venue = Venue(name, city, state, address, phone, genre_objects, image_link, facebook_link, website_link, looking_for_talent, seeking)
   db.session.add(new_venue)
   db.session.commit()
+  db.session.close()
 
   # on successful db insert, flash success
   flash('Venue ' + request.form['name'] + ' was successfully listed!')
