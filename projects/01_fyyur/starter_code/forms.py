@@ -2,6 +2,7 @@ from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
 from wtforms.validators import DataRequired, AnyOf, URL
+from enum import Enum
 
 class ShowForm(Form):
     artist_id = StringField(
@@ -15,6 +16,10 @@ class ShowForm(Form):
         validators=[DataRequired()],
         default= datetime.today()
     )
+
+# class Genres(Enum):
+#     EnterMedia = 'EnterMedia'
+#     WhalesMedia = 'WhalesMedia'
 
 class VenueForm(Form):
     name = StringField(
