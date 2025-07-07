@@ -55,9 +55,9 @@ class Venue(db.Model):
     __tablename__ = 'Venue'
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
+    name = db.Column(db.String, nullable=False)
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(db.String(120), nullable=False)
     address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     genres = db.relationship('Genres', secondary=venue_genres, backref=db.backref('genres', lazy=True))
@@ -74,7 +74,7 @@ class Artist(db.Model):
     __tablename__ = 'Artist'
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    name = db.Column(db.String)
+    name = db.Column(db.String, nullable=False)
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
@@ -129,8 +129,13 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
-  data2 = Venue.query.order_by('id').all()
-  print(data2)
+  # venues = Venue.query.group_by('city', 'state').all()
+  # print(venues)
+  # data2 = []
+
+  # for venue in venues:
+  #   return
+    
   data=[{
     "city": "San Francisco",
     "state": "CA",
