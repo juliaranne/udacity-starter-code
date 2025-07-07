@@ -67,6 +67,9 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(500))
 
+    def __repr__(self):
+      return f'<Venue {self.id} {self.name}>'
+
 class Artist(db.Model):
     __tablename__ = 'Artist'
 
@@ -126,7 +129,8 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
-  # data2 = Venue.query.order_by('id').all()
+  data2 = Venue.query.order_by('id').all()
+  print(data2)
   data=[{
     "city": "San Francisco",
     "state": "CA",
