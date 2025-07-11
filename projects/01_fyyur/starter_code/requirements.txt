@@ -1,5 +1,5 @@
 babel==2.9.0
-python-dateutil==2.6.0
+python-dateutil==2.7.0
 flask-moment==1.0.6
 flask-wtf==1.1.2
 flask_sqlalchemy==3.1.1
