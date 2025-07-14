@@ -204,23 +204,23 @@ def show_venue(venue_id):
     else:
         upcoming_shows.append(show_data)
 
-    response = {
-      "id": venue.id,
-      "name": venue.name,
-      "genres": [genre.genre for genre in venue.genres], 
-      "address": venue.address,
-      "city": venue.city,
-      "state": venue.state,
-      "phone": venue.phone,
-      "website": venue.website_link,
-      "facebook_link": venue.facebook_link,
-      "seeking_talent": venue.seeking_talent,
-      "image_link": venue.image_link,
-      "past_shows": past_shows,
-      "upcoming_shows": upcoming_shows,
-      "past_shows_count": len(past_shows),
-      "upcoming_shows_count": len(upcoming_shows)
-    }
+  response = {
+    "id": venue.id,
+    "name": venue.name,
+    "genres": [genre.genre for genre in venue.genres], 
+    "address": venue.address,
+    "city": venue.city,
+    "state": venue.state,
+    "phone": venue.phone,
+    "website": venue.website_link,
+    "facebook_link": venue.facebook_link,
+    "seeking_talent": venue.seeking_talent,
+    "image_link": venue.image_link,
+    "past_shows": past_shows,
+    "upcoming_shows": upcoming_shows,
+    "past_shows_count": len(past_shows),
+    "upcoming_shows_count": len(upcoming_shows)
+  }
   
   return render_template('pages/show_venue.html', venue=response)
 
