@@ -8,7 +8,6 @@ import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for, jsonify
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import joinedload
 from collections import defaultdict
 import logging
 from logging import Formatter, FileHandler
@@ -134,7 +133,7 @@ def venues():
   # TODO: replace with real venues data.
   #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
   now = datetime.now()
-  venues = Venue.query.options(joinedload(Venue.shows)).all()
+  venues = Venue.query.order_by('name').all()
 
   city_state_map = defaultdict(list)
 
@@ -165,7 +164,7 @@ def search_venues():
   now = datetime.now()
 
   search_term = request.form['search_term']
-  all_venues = Venue.query.options(joinedload(Venue.shows))
+  all_venues = Venue.query
   results = all_venues.filter(Venue.name.ilike('%' + search_term + '%')).all()
 
   venues = []
@@ -177,6 +176,8 @@ def search_venues():
     "count": len(results),
     "data": venues
   }
+
+  print(response)
 
   return render_template('pages/search_venues.html', results=response, search_term=search_term)
 
@@ -365,19 +366,8 @@ def show_artist(artist_id):
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
   form = ArtistForm()
-  artist={
-    "id": 4,
-    "name": "Guns N Petals",
-    "genres": ["Rock n Roll"],
-    "city": "San Francisco",
-    "state": "CA",
-    "phone": "326-123-5000",
-    "website": "https://www.gunsnpetalsband.com",
-    "facebook_link": "https://www.facebook.com/GunsNPetals",
-    "seeking_venue": True,
-    "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
-    "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
-  }
+  artist = Artist.query.get(artist_id)
+
   # TODO: populate form with fields from artist with ID <artist_id>
   return render_template('forms/edit_artist.html', form=form, artist=artist)
 
