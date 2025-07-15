@@ -48,9 +48,11 @@ block content %}
     </p>
     {% endif %}
   </div>
+  {% if venue.image_link %}
   <div class="col-sm-6">
     <img src="{{ venue.image_link }}" alt="Venue Image" />
   </div>
+  {% endif %}
 </div>
 <section>
   <h2 class="monospace">
@@ -94,6 +96,26 @@ block content %}
 <a href="/venues/{{ venue.id }}/edit"
   ><button type="button" class="btn btn-primary btn-lg">Edit</button></a
 >
-<button class="btn btn-lg">Delete</button>
-
+<button data-id="{{venue.id}}" id="deleteVenue" class="btn btn-lg">
+  Delete
+</button>
+<script>
+  const deleteBtn = document.getElementById("deleteVenue");
+  const id = deleteBtn.dataset.id;
+  console.log(id);
+  deleteBtn.onclick = () => {
+    fetch(`/venues/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(() => {
+        console.log("success");
+      })
+      .catch(() => {
+        console.log("error");
+      });
+  };
+</script>
 {% endblock %}
