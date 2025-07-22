@@ -286,11 +286,11 @@ def delete_venue(venue_id):
   except:
     db.session.rollback()
     error = True
-    flash('Venue' + str(venue_id) + 'could not be deleted!')
+    flash('Venue ' + venue.name + ' could not be deleted')
   finally:
     db.session.close()
   if not error:
-    flash('Venue' + str(venue_id) + 'was successfully deleted!')
+    flash('Venue ' + venue.name + ' was successfully deleted!')
   
   return jsonify({ 'success': True })
 

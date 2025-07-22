@@ -102,7 +102,6 @@ block content %}
 <script>
   const deleteBtn = document.getElementById("deleteVenue");
   const id = deleteBtn.dataset.id;
-  console.log(id);
   deleteBtn.onclick = () => {
     fetch(`/venues/${id}`, {
       method: "DELETE",
@@ -111,7 +110,7 @@ block content %}
       },
     })
       .then(() => {
-        console.log("success");
+        location.href = "/venues";
       })
       .catch(() => {
         console.log("error");
