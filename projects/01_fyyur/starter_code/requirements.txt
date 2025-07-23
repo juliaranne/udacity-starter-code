@@ -1,5 +1,11 @@
-babel==2.9.0
-python-dateutil==2.7.0
-flask-moment==1.0.6
-flask-wtf==1.1.2
+alembic==1.16.4
+Babel==2.17.0
+Fabric==3.2.2
+Flask==3.1.1
+flask_migrate==4.1.0
+flask_moment==1.0.6
 flask_sqlalchemy==3.1.1
+flask_wtf==1.2.2
+python_dateutil==2.9.0.post0
+SQLAlchemy==2.0.41
+WTForms==3.2.1
