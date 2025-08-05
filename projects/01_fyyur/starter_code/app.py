@@ -224,33 +224,36 @@ def create_venue_form():
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
 
-  try:
-    name = request.form['name']
-    city = request.form['city']
-    state = request.form['state']
-    address = request.form['address']
-    phone = request.form['phone']
-    image_link = request.form['image_link']
-    facebook_link = request.form['facebook_link']
-    website_link = request.form['website_link']
-    seeking_talent = True if request.form['seeking_talent'] == 'y' else False
-    seeking_description = request.form['seeking_description']
-    genre_names = request.form.getlist('genres')
+  form = VenueForm(request.form, meta={'csrf': False})
+  if form.validate():
 
     genre_objects = []
-    for genre_name in genre_names:
+    for genre_name in form.genres.data:
       genre = Genres.query.filter_by(genre=genre_name).first()
       genre_objects.append(genre)
 
-    new_venue = Venue(name=name, city=city, state=state, address=address, phone=phone, genres=genre_objects, image_link=image_link, facebook_link=facebook_link, website_link=website_link, seeking_talent=seeking_talent, seeking_description=seeking_description)
-    db.session.add(new_venue)
-    db.session.commit()
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
-  except:
-    db.session.rollback()
-    flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.')
-  finally:
-    db.session.close()
+    try:
+      venue = Venue(
+          name=form.name.data,
+          city=form.city.data,
+          state=form.state.data,
+          address=form.address.data,
+          phone=form.phone.data,
+          image_link=form.image_link.data,
+          facebook_link=form.facebook_link.data,
+          website_link=form.website_link.data,
+          genres=genre_objects,  
+          seeking_talent=form.seeking_talent.data,
+          seeking_description=form.seeking_description.data 
+      )
+      db.session.add(venue)
+      db.session.commit()
+      flash('Venue ' + form.name.data + ' was successfully listed!')
+    except Exception as e:
+      db.session.rollback()
+      flash('An error occurred. Venue ' + form.name.data + ' could not be listed.')
+    finally:
+      db.session.close()
 
   return render_template('pages/home.html')
 
