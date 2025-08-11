@@ -9,7 +9,6 @@ from fyyur.models import Venue, Artist, Genres, Shows
 from . import db
 
 main = Blueprint('main', __name__)
-filters = Blueprint('filters', __name__)
 
 #----------------------------------------------------------------------------#
 # Filters.
