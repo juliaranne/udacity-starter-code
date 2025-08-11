@@ -390,8 +390,6 @@ def create_artist_submission():
       flash('An error occurred. Artist ' + form.name.data + ' could not be listed.')
     finally:
       db.session.close()
-  else:
-    print(form.errors)
 
   return render_template('pages/home.html')
 
@@ -426,19 +424,23 @@ def create_shows():
 @main.route('/shows/create', methods=['POST'])
 def create_show_submission():
 
-  try:
-    artist_id = request.form['artist_id']
-    venue_id = request.form['venue_id']
-    start_time = request.form['start_time']
+  form = ShowForm(request.form, meta={'csrf': False})
 
-    show = Shows(venue_id=venue_id, artist_id=artist_id, start_time=start_time)
-    db.session.add(show)
-    db.session.commit()
-    flash('Show was successfully listed!')
-  except:
-    flash('There was an error and your show could not be listed')
-  finally:
-    db.session.close()
+  if form.validate():
+    try:
+      show = Shows(
+        artist_id=form.artist_id.data,
+        venue_id=form.venue_id.data,
+        start_time=form.start_time.data
+      )
+      db.session.add(show)
+      db.session.commit()
+      flash('Show was successfully listed!')
+
+    except:
+      flash('There was an error and your show could not be listed')
+    finally:
+      db.session.close()
 
   return render_template('pages/home.html')
 
