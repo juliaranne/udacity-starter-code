@@ -1,120 +1,20 @@
-#----------------------------------------------------------------------------#
-# Imports
-#----------------------------------------------------------------------------#
 
 import json
 import dateutil.parser
 import babel
-from flask import Flask, render_template, request, flash, redirect, url_for, jsonify
-from flask_moment import Moment
-from flask_sqlalchemy import SQLAlchemy
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from collections import defaultdict
-import logging
-from logging import Formatter, FileHandler
-from flask_wtf import Form
-from forms import *
-from flask_migrate import Migrate
-#----------------------------------------------------------------------------#
-# App Config.
-#----------------------------------------------------------------------------#
+from fyyur.forms import *
+from fyyur.models import Venue, Artist, Genres, Shows
+from . import db
 
-app = Flask(__name__)
-moment = Moment(app)
-app.config.from_object('config')
-db = SQLAlchemy(app)
-app.app_context().push()
-
-migrate = Migrate(app, db)
-
-#----------------------------------------------------------------------------#
-# Models.
-#----------------------------------------------------------------------------#
-
-# Association table
-venue_genres = db.Table('venue_genres',
-    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
-    db.Column('genre_id', db.Integer, db.ForeignKey('Genres.id'), primary_key=True)
-)
-
-artist_genres = db.Table('artist_genres',
-    db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True),
-    db.Column('genre_id', db.Integer, db.ForeignKey('Genres.id'), primary_key=True)
-)
-
-class Genres(db.Model):
-  __tablename__ = 'Genres'
-
-  id = db.Column(db.Integer, primary_key=True, nullable=False)
-  genre = db.Column(db.String, nullable=False, unique=True)
-
-  def __repr__(self):
-    return f'<Genres {self.id} {self.genre}>'
-
-class Venue(db.Model):
-    __tablename__ = 'Venue'
-
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    name = db.Column(db.String, nullable=False)
-    city = db.Column(db.String(120), nullable=False)
-    state = db.Column(db.String(120), nullable=False)
-    address = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
-    genres = db.relationship('Genres', secondary=venue_genres, backref=db.backref('genres', lazy=True))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
-    website_link = db.Column(db.String(120))
-    seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
-    seeking_description = db.Column(db.String(500))
-    shows = db.relationship('Shows', backref='venue', lazy=True)
-
-    def __repr__(self):
-      return f'<Venue {self.id} {self.name}>'
-
-class Artist(db.Model):
-    __tablename__ = 'Artist'
-
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    name = db.Column(db.String, nullable=False)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
-    genres = db.relationship('Genres', secondary=artist_genres, backref=db.backref('genres_of_artist', lazy=True))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
-    website_link = db.Column(db.String(120))
-    seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
-    seeking_description = db.Column(db.String(500))
-
-class Shows(db.Model):
-    __tablename__ = 'Shows'
-
-    id = db.Column(db.Integer, primary_key=True)
-    start_time = db.Column(db.DateTime, nullable=False)
-    artist_id = db.Column(db.Integer, db.ForeignKey(
-        'Artist.id'), nullable=False)
-    venue_id = db.Column(db.Integer, db.ForeignKey(
-        'Venue.id'), nullable=False)
-    artist = db.relationship('Artist', backref='shows')
-
-#----------------------------------------------------------------------------#
-# Filters.
-#----------------------------------------------------------------------------#
-
-def format_datetime(value, format='medium'):
-  date = dateutil.parser.parse(value)
-  if format == 'full':
-      format="EEEE MMMM, d, y 'at' h:mma"
-  elif format == 'medium':
-      format="EE MM, dd, y h:mma"
-  return babel.dates.format_datetime(date, format, locale='en')
-
-app.jinja_env.filters['datetime'] = format_datetime
+main = Blueprint('main', __name__)
 
 #----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
 
-@app.route('/')
+@main.route('/')
 def index():
   return render_template('pages/home.html')
 
@@ -122,7 +22,7 @@ def index():
 #  Venues
 #  ----------------------------------------------------------------
 
-@app.route('/venues')
+@main.route('/venues')
 def venues():
 
   now = datetime.now()
@@ -149,7 +49,7 @@ def venues():
 
   return render_template('pages/venues.html', areas=data)
 
-@app.route('/venues/search', methods=['POST'])
+@main.route('/venues/search', methods=['POST'])
 def search_venues():
 
   now = datetime.now()
@@ -170,7 +70,7 @@ def search_venues():
 
   return render_template('pages/search_venues.html', results=response, search_term=search_term)
 
-@app.route('/venues/<int:venue_id>')
+@main.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
 
   now = datetime.now()
@@ -216,12 +116,12 @@ def show_venue(venue_id):
 #  Create Venue
 #  ----------------------------------------------------------------
 
-@app.route('/venues/create', methods=['GET'])
+@main.route('/venues/create', methods=['GET'])
 def create_venue_form():
   form = VenueForm()
   return render_template('forms/new_venue.html', form=form)
 
-@app.route('/venues/create', methods=['POST'])
+@main.route('/venues/create', methods=['POST'])
 def create_venue_submission():
 
   form = VenueForm(request.form, meta={'csrf': False})
@@ -257,7 +157,7 @@ def create_venue_submission():
 
   return render_template('pages/home.html')
 
-@app.route('/venues/<venue_id>', methods=['DELETE'])
+@main.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
 
   error = False
@@ -278,12 +178,12 @@ def delete_venue(venue_id):
 
 #  Artists
 #  ----------------------------------------------------------------
-@app.route('/artists')
+@main.route('/artists')
 def artists():
   data = Artist.query.order_by('name').all()
   return render_template('pages/artists.html', artists=data)
 
-@app.route('/artists/search', methods=['POST'])
+@main.route('/artists/search', methods=['POST'])
 def search_artists():
 
   now = datetime.now()
@@ -304,7 +204,7 @@ def search_artists():
 
   return render_template('pages/search_artists.html', results=response, search_term=search_term)
 
-@app.route('/artists/<int:artist_id>')
+@main.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
   now = datetime.now()
   artist = Artist.query.get(artist_id)
@@ -345,7 +245,7 @@ def show_artist(artist_id):
 
 #  Update
 #  ----------------------------------------------------------------
-@app.route('/artists/<int:artist_id>/edit', methods=['GET'])
+@main.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
   form = ArtistForm()
   artist = Artist.query.get(artist_id)
@@ -363,7 +263,7 @@ def edit_artist(artist_id):
 
   return render_template('forms/edit_artist.html', form=form, artist=artist)
 
-@app.route('/artists/<int:artist_id>/edit', methods=['POST'])
+@main.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
 
   artist = Artist.query.get(artist_id)
@@ -390,7 +290,7 @@ def edit_artist_submission(artist_id):
 
   return redirect(url_for('show_artist', artist_id=artist_id))
 
-@app.route('/venues/<int:venue_id>/edit', methods=['GET'])
+@main.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
   form = VenueForm()
   venue = Venue.query.get(venue_id)
@@ -409,7 +309,7 @@ def edit_venue(venue_id):
 
   return render_template('forms/edit_venue.html', form=form, venue=venue)
 
-@app.route('/venues/<int:venue_id>/edit', methods=['POST'])
+@main.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
 
   venue = Venue.query.get(venue_id)
@@ -440,12 +340,12 @@ def edit_venue_submission(venue_id):
 #  Create Artist
 #  ----------------------------------------------------------------
 
-@app.route('/artists/create', methods=['GET'])
+@main.route('/artists/create', methods=['GET'])
 def create_artist_form():
   form = ArtistForm()
   return render_template('forms/new_artist.html', form=form)
 
-@app.route('/artists/create', methods=['POST'])
+@main.route('/artists/create', methods=['POST'])
 def create_artist_submission():
   form = ArtistForm(request.form, meta={'csrf': False})
   if form.validate():
@@ -485,7 +385,7 @@ def create_artist_submission():
 #  Shows
 #  ----------------------------------------------------------------
 
-@app.route('/shows')
+@main.route('/shows')
 def shows():
   query = Shows.query.order_by('start_time').all()
 
@@ -504,13 +404,13 @@ def shows():
 
   return render_template('pages/shows.html', shows=shows)
 
-@app.route('/shows/create')
+@main.route('/shows/create')
 def create_shows():
   # renders form. do not touch.
   form = ShowForm()
   return render_template('forms/new_show.html', form=form)
 
-@app.route('/shows/create', methods=['POST'])
+@main.route('/shows/create', methods=['POST'])
 def create_show_submission():
 
   try:
@@ -529,36 +429,10 @@ def create_show_submission():
 
   return render_template('pages/home.html')
 
-@app.errorhandler(404)
+@main.errorhandler(404)
 def not_found_error(error):
     return render_template('errors/404.html'), 404
 
-@app.errorhandler(500)
+@main.errorhandler(500)
 def server_error(error):
     return render_template('errors/500.html'), 500
-
-
-if not app.debug:
-    file_handler = FileHandler('error.log')
-    file_handler.setFormatter(
-        Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
-    )
-    app.logger.setLevel(logging.INFO)
-    file_handler.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
-    app.logger.info('errors')
-
-#----------------------------------------------------------------------------#
-# Launch.
-#----------------------------------------------------------------------------#
-
-# Default port:
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=3000)
-
-# Or specify port manually:
-'''
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
-'''
