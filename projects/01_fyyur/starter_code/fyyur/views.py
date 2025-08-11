@@ -9,6 +9,20 @@ from fyyur.models import Venue, Artist, Genres, Shows
 from . import db
 
 main = Blueprint('main', __name__)
+filters = Blueprint('filters', __name__)
+
+#----------------------------------------------------------------------------#
+# Filters.
+#----------------------------------------------------------------------------#
+def format_datetime(value, format='medium'):
+  date = dateutil.parser.parse(value)
+  if format == 'full':
+      format="EEEE MMMM, d, y 'at' h:mma"
+  elif format == 'medium':
+      format="EE MM, dd, y h:mma"
+  return babel.dates.format_datetime(date, format, locale='en')
+
+main.add_app_template_filter(format_datetime, name='datetime')
 
 #----------------------------------------------------------------------------#
 # Controllers.
