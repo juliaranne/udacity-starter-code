@@ -441,6 +441,8 @@ def create_show_submission():
       flash('There was an error and your show could not be listed')
     finally:
       db.session.close()
+  else:
+    return render_template('forms/new_show.html', form=form)
 
   return render_template('pages/home.html')
 

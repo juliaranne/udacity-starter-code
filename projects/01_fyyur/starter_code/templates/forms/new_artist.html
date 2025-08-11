@@ -4,29 +4,24 @@ block content %} {% from "forms/_formhelpers.html" import render_field %}
 <div class="form-wrapper">
   <form method="post" class="form">
     <h3 class="form-heading">
-      List a new venue
+      List a new artist
       <a href="{{ url_for('main.index') }}" title="Back to homepage"
         ><i class="fa fa-home pull-right"></i
       ></a>
     </h3>
-    {{ render_field(form.name, class_ = 'form-control', autofocus = true) }} {{
-    render_field(form.city, class_ = 'form-control', placeholder='City',
-    autofocus = true) }} {{ render_field(form.state, class_ = 'form-control',
-    placeholder='State', autofocus = true) }} {{ render_field(form.phone, class_
-    = 'form-control', placeholder='xxx-xxx-xxxx', autofocus = true) }} {{
-    render_field(form.genres, class_ = 'form-control', placeholder='Genres,
-    separated by commas', autofocus = true) }} {{
-    render_field(form.facebook_link, class_ = 'form-control',
-    placeholder='http://', autofocus = true) }} {{ render_field(form.image_link,
-    class_ = 'form-control', placeholder='http://', autofocus = true) }} {{
-    render_field(form.website_link, class_ = 'form-control',
-    placeholder='http://', autofocus = true) }} {{
-    render_field(form.seeking_venue, placeholder='Venue', autofocus = true) }}
-    {{ render_field(form.seeking_description, class_ = 'form-control', autofocus
-    = true) }}
+    {{ render_field(form.name, class_ = 'form-control', autofocus = true) }} 
+    {{ render_field(form.city, class_ = 'form-control', placeholder='City', autofocus = true) }} 
+    {{ render_field(form.state, class_ = 'form-control', placeholder='State', autofocus = true) }} 
+    {{ render_field(form.phone, class_ = 'form-control', placeholder='xxx-xxx-xxxx', autofocus = true) }} 
+    {{ render_field(form.genres, class_ = 'form-control', placeholder='Genres, separated by commas', autofocus = true) }} 
+    {{ render_field(form.facebook_link, class_ = 'form-control', placeholder='http://', autofocus = true) }} 
+    {{ render_field(form.image_link, class_ = 'form-control', placeholder='http://', autofocus = true) }} 
+    {{ render_field(form.website_link, class_ = 'form-control', placeholder='http://', autofocus = true) }} 
+    {{ render_field(form.seeking_venue, placeholder='Venue', autofocus = true) }}
+    {{ render_field(form.seeking_description, class_ = 'form-control', autofocus = true) }}
     <input
       type="submit"
-      value="Create Venue"
+      value="Create Artist"
       class="btn btn-primary btn-lg btn-block"
     />
   </form>
