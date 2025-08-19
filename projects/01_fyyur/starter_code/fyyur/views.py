@@ -85,26 +85,42 @@ def search_venues():
 
 @main.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
-
   now = datetime.now()
-
   venue = Venue.query.get(venue_id)
 
-  past_shows = []
-  upcoming_shows = []
+  upcoming_shows = (
+      db.session.query(Shows)
+      .join(Artist, Artist.id == Shows.artist_id)
+      .filter(Shows.venue_id == venue_id, Shows.start_time > now)
+      .all()
+  )
 
-  for show in venue.shows:
-    artist = show.artist
-    show_data = {
-        "artist_id": artist.id,
-        "artist_name": artist.name,
-        "artist_image_link": artist.image_link,
-        "start_time": show.start_time.isoformat()
+  past_shows = (
+    db.session.query(Shows)
+    .join(Artist, Artist.id == Shows.artist_id)
+    .filter(Shows.venue_id == venue_id, Shows.start_time <= now)
+    .all()
+  )
+
+  past_shows_data = [
+    {
+        "artist_id": show.artist.id,
+        "artist_name": show.artist.name,
+        "artist_image_link": show.artist.image_link,
+        "start_time": show.start_time.isoformat(),
     }
-    if show.start_time < now:
-        past_shows.append(show_data)
-    else:
-        upcoming_shows.append(show_data)
+    for show in past_shows
+  ]
+
+  upcoming_shows_data = [
+    {
+        "artist_id": show.artist.id,
+        "artist_name": show.artist.name,
+        "artist_image_link": show.artist.image_link,
+        "start_time": show.start_time.isoformat(),
+    }
+    for show in upcoming_shows
+  ]
 
   data = {
     "id": venue.id,
@@ -118,10 +134,10 @@ def show_venue(venue_id):
     "facebook_link": venue.facebook_link,
     "seeking_talent": venue.seeking_talent,
     "image_link": venue.image_link,
-    "past_shows": past_shows,
-    "upcoming_shows": upcoming_shows,
-    "past_shows_count": len(past_shows),
-    "upcoming_shows_count": len(upcoming_shows)
+    "past_shows": past_shows_data,
+    "upcoming_shows": upcoming_shows_data,
+    "past_shows_count": len(past_shows_data),
+    "upcoming_shows_count": len(upcoming_shows_data)
   }
   
   return render_template('pages/show_venue.html', venue=data)
