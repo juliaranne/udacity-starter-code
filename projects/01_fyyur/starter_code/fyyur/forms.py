@@ -2,13 +2,35 @@ from datetime import datetime
 from flask_wtf import FlaskForm as Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
 from wtforms.validators import DataRequired, AnyOf, URL, Optional, Regexp
+from enum import Enum
+
+class GenreEnum(Enum):
+    alternative = "alternative"
+    blues = "blues"
+    classical = "classical"
+    country = "country"
+    electronic = "electronic"
+    folk = "folk"
+    funk = "funk"
+    hip_hop = "hip-hop"
+    heavy_metal = "heavy metal"
+    instrumental = "instrumental"
+    jazz = "jazz"
+    musical_theatre = "musical theatre"
+    pop = "pop"
+    punk = "punk"
+    rnb = "r&b"
+    reggae = "reggae"
+    rock_n_roll = "rock n roll"
+    soul = "soul"
+    other = "other"
 
 class ShowForm(Form):
     artist_id = StringField(
-        'artist_id', validators=[DataRequired(), Regexp(regex='/^\d+$/')]
+        'artist_id', validators=[DataRequired(), Regexp(regex='/^\\d+$/')]
     )
     venue_id = StringField(
-        'venue_id', validators=[DataRequired(), Regexp(regex='/^\d+$/')]
+        'venue_id', validators=[DataRequired(), Regexp(regex='/^\\d+$/')]
     )
     start_time = DateTimeField(
         'start_time',
@@ -89,29 +111,8 @@ class VenueForm(Form):
         'image_link'
     )
     genres = SelectMultipleField(
-        # TODO implement enum restriction
         'genres', validators=[DataRequired()],
-        choices=[
-            ('alternative', 'Alternative'),
-            ('blues', 'Blues'),
-            ('classical', 'Classical'),
-            ('country', 'Country'),
-            ('electronic', 'Electronic'),
-            ('folk', 'Folk'),
-            ('funk', 'Funk'),
-            ('hip-hop', 'Hip-Hop'),
-            ('heavy metal', 'Heavy Metal'),
-            ('instrumental', 'Instrumental'),
-            ('jazz', 'Jazz'),
-            ('musical theatre', 'Musical Theatre'),
-            ('pop', 'Pop'),
-            ('punk', 'Punk'),
-            ('r&b', 'R&B'),
-            ('reggae', 'Reggae'),
-            ('rock n roll', 'Rock n Roll'),
-            ('soul', 'Soul'),
-            ('other', 'Other'),
-        ]
+        choices=[(genre.value, genre.value.title()) for genre in GenreEnum]
     )
     facebook_link = StringField(
         'facebook_link', validators=[Optional(), URL()]
@@ -200,27 +201,7 @@ class ArtistForm(Form):
     )
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
-        choices=[
-            ('alternative', 'Alternative'),
-            ('blues', 'Blues'),
-            ('classical', 'Classical'),
-            ('country', 'Country'),
-            ('electronic', 'Electronic'),
-            ('folk', 'Folk'),
-            ('funk', 'Funk'),
-            ('hip-hop', 'Hip-Hop'),
-            ('heavy metal', 'Heavy Metal'),
-            ('instrumental', 'Instrumental'),
-            ('jazz', 'Jazz'),
-            ('musical theatre', 'Musical Theatre'),
-            ('pop', 'Pop'),
-            ('punk', 'Punk'),
-            ('r&b', 'R&B'),
-            ('reggae', 'Reggae'),
-            ('rock n roll', 'Rock n Roll'),
-            ('soul', 'Soul'),
-            ('other', 'Other'),
-        ]
+        choices=[(genre.value, genre.value.title()) for genre in GenreEnum]
      )
     facebook_link = StringField(
         # TODO implement enum restriction
