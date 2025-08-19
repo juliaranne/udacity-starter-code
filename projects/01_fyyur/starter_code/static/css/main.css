@@ -212,3 +212,9 @@ h2.monospace {
 .subtitle {
   opacity: 0.5;
 }
+.errors {
+  list-style-type: none;
+  color: red;
+  padding: 0;
+  margin: 0;
+}

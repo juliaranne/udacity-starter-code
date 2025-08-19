@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask_wtf import FlaskForm as Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
-from wtforms.validators import DataRequired, AnyOf, URL, Optional, Regexp
+from wtforms.validators import DataRequired, AnyOf, URL, Optional, Regexp, InputRequired
 from enum import Enum
 
 class GenreEnum(Enum):
@@ -27,10 +27,10 @@ class GenreEnum(Enum):
 
 class ShowForm(Form):
     artist_id = StringField(
-        'artist_id', validators=[DataRequired(), Regexp(regex='/^\\d+$/')]
+        'artist_id', validators=[DataRequired(), Regexp(regex=r'^\d+$', message="Please enter a valid id")]
     )
     venue_id = StringField(
-        'venue_id', validators=[DataRequired(), Regexp(regex='/^\\d+$/')]
+        'venue_id', validators=[DataRequired(), Regexp(regex=r'^\d+$', message="Please enter a valid id")]
     )
     start_time = DateTimeField(
         'start_time',
