@@ -88,19 +88,8 @@ def show_venue(venue_id):
   now = datetime.now()
   venue = Venue.query.get(venue_id)
 
-  upcoming_shows = (
-      db.session.query(Shows)
-      .join(Artist, Artist.id == Shows.artist_id)
-      .filter(Shows.venue_id == venue_id, Shows.start_time > now)
-      .all()
-  )
-
-  past_shows = (
-    db.session.query(Shows)
-    .join(Artist, Artist.id == Shows.artist_id)
-    .filter(Shows.venue_id == venue_id, Shows.start_time <= now)
-    .all()
-  )
+  upcoming_shows = (db.session.query(Shows).join(Artist, Artist.id == Shows.artist_id).filter(Shows.venue_id == venue_id, Shows.start_time > now).all())
+  past_shows = (db.session.query(Shows).join(Artist, Artist.id == Shows.artist_id).filter(Shows.venue_id == venue_id, Shows.start_time <= now).all())
 
   past_shows_data = [
     {
@@ -238,6 +227,8 @@ def show_artist(artist_id):
   now = datetime.now()
   artist = Artist.query.get(artist_id)
 
+  venues = (db.session.query(Venue).join(Shows, Shows.venue_id == Venue.id).filter(Shows.artist_id == artist.id, Shows.start_time <= now).all())
+
   past_shows = []
   upcoming_shows = []
 
@@ -268,6 +259,8 @@ def show_artist(artist_id):
     "upcoming_shows": upcoming_shows,
     "past_shows_count": len(past_shows),
     "upcoming_shows_count": len(upcoming_shows),
+    "venues_performed": venues,
+    "venues_performed_count": len(venues)
   }
   
   return render_template('pages/show_artist.html', artist=data)

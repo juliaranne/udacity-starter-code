@@ -83,6 +83,21 @@ endblock %} {% block content %}
     {% endfor %}
   </div>
 </section>
+<section>
+  <h2 class="monospace">
+    {{ artist.venues_performed_count }} Past {% if artist.venues_performed_count
+    == 1 %}Venue{% else %}Venues{% endif %}
+  </h2>
+  <div class="row">
+    <ul>
+      {%for venue in artist.venues_performed %}
+      <li>
+        <a href="/venues/{{ venue.id }}">{{ venue.name }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
 
 <a href="/artists/{{ artist.id }}/edit"
   ><button class="btn btn-primary btn-lg">Edit</button></a
