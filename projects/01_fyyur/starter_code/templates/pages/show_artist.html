@@ -31,7 +31,7 @@ endblock %} {% block content %}
         >{{ artist.facebook_link }}</a
       >{% else %}No Facebook Link{% endif %}
     </p>
-    {{ artist.seeking_description }} {% if artist.seeking_venue %}
+    {% if artist.seeking_venue %}
     <div class="seeking">
       <p class="lead">Currently seeking performance venues</p>
       <div class="description">
